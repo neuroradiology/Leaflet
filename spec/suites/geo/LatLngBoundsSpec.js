@@ -75,15 +75,25 @@ describe('LatLngBounds', function () {
 			expect(a.equals([[14, 13], [30, 40]])).to.eql(false);
 			expect(a.equals(null)).to.eql(false);
 		});
+
+		it("returns true if compared objects are equal within a certain margin", function () {
+			expect(a.equals([[15, 11], [29, 41]], 1)).to.eql(true);
+		});
+
+		it("returns false if compared objects are not equal within a certain margin", function () {
+			expect(a.equals([[15, 11], [29, 41]], 0.5)).to.eql(false);
+		});
 	});
 
 	describe('#isValid', function () {
 		it('returns true if properly set up', function () {
 			expect(a.isValid()).to.be.ok();
 		});
+
 		it('returns false if is invalid', function () {
 			expect(c.isValid()).to.not.be.ok();
 		});
+
 		it('returns true if extended', function () {
 			c.extend([0, 0]);
 			expect(c.isValid()).to.be.ok();
@@ -100,35 +110,30 @@ describe('LatLngBounds', function () {
 		it('returns a proper bbox south value', function () {
 			expect(a.getSouth()).to.eql(14);
 		});
-
 	});
 
 	describe('#getEast', function () {
 		it('returns a proper bbox east value', function () {
 			expect(a.getEast()).to.eql(40);
 		});
-
 	});
 
 	describe('#getNorth', function () {
 		it('returns a proper bbox north value', function () {
 			expect(a.getNorth()).to.eql(30);
 		});
-
 	});
 
 	describe('#toBBoxString', function () {
 		it('returns a proper left,bottom,right,top bbox', function () {
 			expect(a.toBBoxString()).to.eql("12,14,40,30");
 		});
-
 	});
 
 	describe('#getNorthWest', function () {
 		it('returns a proper north-west LatLng', function () {
 			expect(a.getNorthWest()).to.eql(new L.LatLng(a.getNorth(), a.getWest()));
 		});
-
 	});
 
 	describe('#getSouthEast', function () {
@@ -138,9 +143,19 @@ describe('LatLngBounds', function () {
 	});
 
 	describe('#contains', function () {
-		it('returns true if contains latlng point', function () {
+		it('returns true if contains latlng point as array', function () {
 			expect(a.contains([16, 20])).to.eql(true);
 			expect(L.latLngBounds(a).contains([5, 20])).to.eql(false);
+		});
+
+		it('returns true if contains latlng point as {lat:, lng:} object', function () {
+			expect(a.contains({lat: 16, lng: 20})).to.eql(true);
+			expect(L.latLngBounds(a).contains({lat: 5, lng: 20})).to.eql(false);
+		});
+
+		it('returns true if contains latlng point as L.LatLng instance', function () {
+			expect(a.contains(L.latLng([16, 20]))).to.eql(true);
+			expect(L.latLngBounds(a).contains(L.latLng([5, 20]))).to.eql(false);
 		});
 
 		it('returns true if contains bounds', function () {
@@ -164,9 +179,9 @@ describe('LatLngBounds', function () {
 		it('returns true if overlaps the given bounds', function () {
 			expect(a.overlaps([[16, 20], [50, 60]])).to.eql(true);
 		});
+
 		it('returns false if just touches the boundary of the given bounds', function () {
 			expect(a.overlaps([[25, 40], [55, 50]])).to.eql(false);
 		});
 	});
-
 });

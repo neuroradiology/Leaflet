@@ -1,10 +1,9 @@
 describe('Polyline', function () {
+	var map = new L.Map(document.createElement('div'), {center: [55.8, 37.6], zoom: 6});
 
-	var c = document.createElement('div');
-	c.style.width = '400px';
-	c.style.height = '400px';
-	var map = new L.Map(c);
-	map.setView(new L.LatLng(55.8, 37.6), 6);
+	after(function () {
+		map.remove();
+	});
 
 	describe("#initialize", function () {
 		it("doesn't overwrite the given latlng array", function () {
@@ -35,7 +34,6 @@ describe('Polyline', function () {
 		});
 
 		it("should accept an empty array", function () {
-
 			var polyline = new L.Polyline([]);
 
 			expect(polyline._latlngs).to.eql([]);
@@ -50,7 +48,6 @@ describe('Polyline', function () {
 	});
 
 	describe("#isEmpty", function () {
-
 		it('should return true for a polyline with no latlngs', function () {
 			var polyline = new L.Polyline([]);
 			expect(polyline.isEmpty()).to.be(true);
@@ -103,7 +100,6 @@ describe('Polyline', function () {
 	});
 
 	describe('#getCenter', function () {
-
 		it('should compute center of a big flat line on equator', function () {
 			var polyline = new L.Polyline([[0, 0], [0, 90]]).addTo(map);
 			expect(polyline.getCenter()).to.eql(L.latLng([0, 45]));
@@ -138,39 +134,13 @@ describe('Polyline', function () {
 		it('throws error if not yet added to map', function () {
 			expect(function () {
 				var polyline = new L.Polyline([[0, 0], [0, 0.090]]);
-				var center = polyline.getCenter();
+				polyline.getCenter();
 			}).to.throwException('Must add layer to map before using getCenter()');
 		});
 
 	});
 
-	describe('#_flat', function () {
-		var layer = L.polyline([]);
-
-		it('should return true for an array of LatLngs', function () {
-			expect(L.Polyline._flat([L.latLng([0, 0])])).to.be(true);
-		});
-
-		it('should return true for an array of LatLngs arrays', function () {
-			expect(L.Polyline._flat([[0, 0]])).to.be(true);
-		});
-
-		it('should return true for an empty array', function () {
-			expect(L.Polyline._flat([])).to.be(true);
-		});
-
-		it('should return false for a nested array of LatLngs', function () {
-			expect(L.Polyline._flat([[L.latLng([0, 0])]])).to.be(false);
-		});
-
-		it('should return false for a nested empty array', function () {
-			expect(L.Polyline._flat([[]])).to.be(false);
-		});
-
-	});
-
 	describe("#_defaultShape", function () {
-
 		it("should return latlngs when flat", function () {
 			var latLngs = [L.latLng([1, 2]), L.latLng([3, 4])];
 
@@ -193,7 +163,6 @@ describe('Polyline', function () {
 	});
 
 	describe("#addLatLng", function () {
-
 		it("should add latlng to latlngs", function () {
 			var latLngs = [
 				[1, 2],
@@ -242,7 +211,5 @@ describe('Polyline', function () {
 
 			expect(polyline._latlngs).to.eql([L.latLng([1, 2])]);
 		});
-
 	});
-
 });

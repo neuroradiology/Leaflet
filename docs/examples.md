@@ -58,6 +58,13 @@ description="A tutorial on how to manage groups of layers and use the layer swit
 
 
 {% include tutorial_link.html
+page="zoom-levels/"
+thumbnail="zoom-levels/thumbnail.png"
+title="Zoom levels"
+description="A deeper look into what zoom levels are."
+%}
+
+{% include tutorial_link.html
 page="crs-simple/crs-simple.html"
 thumbnail="crs-simple/thumbnail.png"
 title="Non-geographical maps"
@@ -81,6 +88,38 @@ description="How the default map panes work to display overlays on top of tiles,
 %}
 
 
+{% include tutorial_link.html
+page="video-overlay/"
+thumbnail="video-overlay/thumbnail.gif"
+title="Showing video files"
+description="Leaflet can help you display videos somewhere on the map."
+%}
 
 ***
-If you find that an important tutorial is missing here, let us know!
+
+The following tutorials cover how to create plugins for Leaflet, and are intended only for developers experienced in JavaScript:
+
+
+{% include tutorial_link.html
+page="extending/extending-1-classes.html"
+thumbnail="extending/thumbnail-1.png"
+title="Extending Leaflet: Class Theory"
+description="An overview of Leaflet's classes, class inheritance, and conventions."
+%}
+
+
+{% include tutorial_link.html
+page="extending/extending-2-layers.html"
+thumbnail="extending/thumbnail-2.png"
+title="Extending Leaflet: Layers"
+description="How to extend layers or create new ones, using specific entry points for doing so."
+%}
+
+
+{% include tutorial_link.html
+page="extending/extending-3-controls.html"
+thumbnail="extending/thumbnail-3.png"
+title="Extending Leaflet: Handlers and Controls"
+description="How to extend or create non-layers."
+%}
+

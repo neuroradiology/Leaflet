@@ -1,6 +1,5 @@
 describe('Tooltip', function () {
-
-	var c, map, p2ll,
+	var c, map,
 	    center = [55.8, 37.6];
 
 	beforeEach(function () {
@@ -14,12 +13,10 @@ describe('Tooltip', function () {
 		document.body.appendChild(c);
 		map = new L.Map(c);
 		map.setView(center, 6);
-		p2ll = function (x, y) {
-			return map.layerPointToLatLng([x, y]);
-		};
 	});
 
 	afterEach(function () {
+		map.remove();
 		document.body.removeChild(c);
 	});
 
@@ -168,8 +165,8 @@ describe('Tooltip', function () {
 	});
 
 	it("it should use a tooltip with a function as content with a FeatureGroup", function () {
-		var marker1 = new L.Marker(new L.LatLng(55.8, 37.6), {description: "I'm marker 1."});
-		var marker2 = new L.Marker(new L.LatLng(54.6, 38.2), {description: "I'm marker 2."});
+		var marker1 = new L.Marker([55.8, 37.6], {description: "I'm marker 1."});
+		var marker2 = new L.Marker([54.6, 38.2], {description: "I'm marker 2."});
 		var group = new L.FeatureGroup([marker1, marker2]).addTo(map);
 
 		group.bindTooltip(function (layer) {
@@ -253,21 +250,16 @@ describe('Tooltip', function () {
 		expect(map.hasLayer(layer._tooltip)).to.be(true);
 	});
 
-	it("is opened when tapping on touch", function () {
-		var oldTouch = L.Browser.touch;
-		L.Browser.touch = true;
+	it.skipIfNotTouch("is opened when tapping on touch", function () {
 		var layer = new L.Marker(center).addTo(map);
 
 		layer.bindTooltip('Tooltip');
 		expect(map.hasLayer(layer._tooltip)).to.be(false);
 		happen.click(layer._icon);
 		expect(map.hasLayer(layer._tooltip)).to.be(true);
-		L.Browser.touch = oldTouch;
 	});
 
-	it("is closed if not permanent when clicking on the map elsewhere on touch", function () {
-		var oldTouch = L.Browser.touch;
-		L.Browser.touch = true;
+	it.skipIfNotTouch("is closed if not permanent when clicking on the map elsewhere on touch", function () {
 		var layer = new L.Marker(center).addTo(map);
 
 		layer.bindTooltip('Tooltip');
@@ -275,7 +267,6 @@ describe('Tooltip', function () {
 		expect(map.hasLayer(layer._tooltip)).to.be(true);
 		happen.click(map._container);
 		expect(map.hasLayer(layer._tooltip)).to.be(false);
-		L.Browser.touch = oldTouch;
 	});
 
 
@@ -292,6 +283,4 @@ describe('Tooltip', function () {
 		layer.bindTooltip('Tooltip', {interactive: true});
 		layer.closeTooltip();
 	});
-
 });
-

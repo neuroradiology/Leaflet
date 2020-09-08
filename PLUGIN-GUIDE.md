@@ -23,7 +23,7 @@ This guide lists a number of best practices for publishing a Leaflet plugin that
 
 ### Repository
 
-The best place to put your Leaflet plugin to is a separate [GitHub](http://github.com) repository.
+The best place to put your Leaflet plugin is a separate [GitHub](http://github.com) repository.
 If you create a collection of plugins for different uses,
 don't put them in one repo &mdash;
 it's usually easier to work with small, self-contained plugins in individual repositories.
@@ -134,7 +134,7 @@ And most importantly, keep it simple. Leaflet is all about *simplicity*.
 
 NPM (Node Packaged Modules) is a package manager and code repository for JavaScript. Publishing your module on NPM allows other developers to quickly find and install your plugin as well as any other plugins it depends on.
 
-NPM has an excellent [developers guide](https://www.npmjs.org/doc/misc/npm-developers.html) to help you through the process.
+NPM has an excellent [developers guide](https://docs.npmjs.com/using-npm/developers.html) to help you through the process.
 
 When you publish your plugin you should add a dependency on `leaflet` to your `package.json` file. This will automatically install Leaflet when your package is installed.
 
@@ -148,14 +148,14 @@ Here is an example of a `package.json` file for a Leaflet plugin.
   "main": "my-plugin.js",
   "author": "You",
   "license": "IST",
-  "dependencies": {
+  "peerDependencies": {
     "leaflet": "^1.0.0"
   }
 }
 ```
 
 If possible, do not commit your minified files (e.g. `dist`) to a repo; this can
-lead to confussion when trying to debug the wrong file. Instead, use `npm` to
+lead to confusion when trying to debug the wrong file. Instead, use `npm` to
 trigger a build/minification just before publishing your package with a
 [`prepublish` script](https://docs.npmjs.com/misc/scripts#common-uses), for example:
 
@@ -205,7 +205,7 @@ You can add support for AMD/CommonJS loaders to your Leaflet plugin by following
 }, window));
 ```
 
-Now your plugin is available as an AMD and CommonJS module and can used used in module loaders like Browserify and RequireJS.
+Now your plugin is available as an AMD and CommonJS module and can be used in module loaders like Browserify and RequireJS.
 
 
 ## Adding to the plugins list

@@ -5,7 +5,7 @@ title: Interactive Choropleth Map
 
 ## Interactive Choropleth Map
 
-This is a case study of creating a colorful interactive [choropleth map](http://en.wikipedia.org/wiki/Choropleth_map) of US States Population Density with the help of [GeoJSON](../geojson/) and some [custom controls](../../reference.html#control) (that will hopefully convince all the remaining major news and government websites that do not use Leaflet yet to start doing so).
+This is a case study of creating a colorful interactive [choropleth map](http://en.wikipedia.org/wiki/Choropleth_map) of US States Population Density with the help of [GeoJSON](../geojson/) and some [custom controls](/reference.html#control) (that will hopefully convince all the remaining major news and government websites that do not use Leaflet yet to start doing so).
 
 The tutorial was inspired by the [Texas Tribune US Senate Runoff Results map](http://www.texastribune.org/library/data/us-senate-runoff-results-map/) (also powered by Leaflet), created by [Ryan Murphy](http://www.texastribune.org/about/staff/ryan-murphy/).
 
@@ -36,9 +36,11 @@ Let's display our states data on a map with a custom Mapbox style for nice grays
 	var mapboxAccessToken = {your access token here};
 	var map = L.map('map').setView([37.8, -96], 4);
 
-	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + mapboxAccessToken, {
-		id: 'mapbox.light',
-		attribution: ...
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + mapboxAccessToken, {
+		id: 'mapbox/light-v9',
+		attribution: ...,
+		tileSize: 512,
+		zoomOffset: -1
 	}).addTo(map);
 
 	L.geoJson(statesData).addTo(map);
@@ -139,7 +141,7 @@ This makes the states highlight nicely on hover and gives us the ability to add 
 
 ### Custom Info Control
 
-We could use the usual popups on click to show information about different states, but we'll choose a different route --- showing it on state hover inside a [custom control](../../reference.html#icontrol).
+We could use the usual popups on click to show information about different states, but we'll choose a different route --- showing it on state hover inside a [custom control](/reference.html#control).
 
 Here's the code for our control:
 
@@ -228,5 +230,3 @@ CSS styles for the control (we also reuse the `info` class defined earlier):
 	}
 
 Enjoy the result on the top of this page, or on a [separate page](example.html).
-
-

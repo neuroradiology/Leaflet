@@ -32,7 +32,7 @@ Popular commercial options, free up to a particular number of requests, include
 [Bing Maps](http://www.microsoft.com/maps/choose-your-bing-maps-API.aspx) (using a [plugin](https://github.com/shramov/leaflet-plugins)),
 [Esri ArcGIS](http://www.esri.com/software/arcgis/arcgisonline/maps/maps-and-map-layers) ([official plugin](https://github.com/Esri/esri-leaflet)),
 [MapQuest](https://developer.mapquest.com/products) ([official plugins](https://developer.mapquest.com/documentation/leaflet-plugins))
-and [Nokia Here](http://developer.here.com/web-experiences).
+and [Here Maps](https://developer.here.com/).
 
 Always be sure to **read the terms of use** of a chosen tile provider, **know its limitations**, and **attribute it properly** in your app.
 
@@ -47,7 +47,7 @@ and [MapQuest Open](http://developer.mapquest.com/web/products/open/map) provide
 
 The problem with Google is that its [Terms of Use](https://developers.google.com/maps/terms) forbid any means of tile access other than through the Google Maps API.
 
-You can add the Google Maps API as a Leaflet layer with a [plugin](https://github.com/shramov/leaflet-plugins). But note that the map experience will not be perfect, because Leaflet will just act as a proxy to the Google Maps JS engine, so you won't get all the performance and usability benefits of using Leaflet when the Google layer is on.
+You can add the Google Maps API as a Leaflet layer with the [GoogleMutant plugin](https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant). But note that the map experience will not be perfect, because Leaflet must wait for the Google Maps JS engine to load the map tiles, so you might experience glitches and lagging when using it.
 
 #### I want to roll my own OSM tile server for Leaflet, where do I start?
 
@@ -57,7 +57,7 @@ Check out [this excellent guide](http://switch2osm.org/serving-tiles/).
 
 There's a number of services that allow you to do this easily,
 notably [MapBox](https://www.mapbox.com/), [CartoDB](http://cartodb.com/) and [GIS Cloud](http://www.giscloud.com/).
-If you want to make tiles on your own, probably the easiest way is using [TileMill](https://www.mapbox.com/tilemill/).
+If you want to make tiles on your own, probably the easiest way is using [TileMill](https://tilemill-project.github.io/tilemill/).
 TileMill can export your map as a single [.mbtiles](https://www.mapbox.com/developers/mbtiles/) file, which can be copied to a webserver and accessed by Leaflet with [a small PHP script](https://github.com/infostreams/mbtiles-php).
 Alternatively, you can [extract](https://github.com/mapbox/mbutil) the tiled images from the .mbtiles database and place them directly on your webserver with absolutely no server-side dependencies.
 
