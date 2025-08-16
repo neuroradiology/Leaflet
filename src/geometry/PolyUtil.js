@@ -1,5 +1,7 @@
-import * as LineUtil from './LineUtil';
-
+import * as LineUtil from './LineUtil.js';
+import {LatLng} from '../geo/LatLng.js';
+import {Point} from './Point.js';
+import {LatLngBounds} from '../geo/LatLngBounds.js';
 /*
  * @namespace PolyUtil
  * Various utility functions for polygon geometries.
@@ -12,11 +14,11 @@ import * as LineUtil from './LineUtil';
  * than polyline, so there's a separate method for it.
  */
 export function clipPolygon(points, bounds, round) {
-	var clippedPoints,
-	    edges = [1, 4, 2, 8],
-	    i, j, k,
-	    a, b,
-	    len, edge, p;
+	let clippedPoints,
+	i, j, k,
+	a, b,
+	len, edge, p;
+	const edges = [1, 4, 2, 8];
 
 	for (i = 0, len = points.length; i < len; i++) {
 		points[i]._code = LineUtil._getBitCode(points[i], bounds);
@@ -52,4 +54,76 @@ export function clipPolygon(points, bounds, round) {
 	}
 
 	return points;
+}
+
+/* @function polygonCenter(latlngs: LatLng[], crs: CRS): LatLng
+ * Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the passed LatLngs (first ring) from a polygon.
+ */
+export function polygonCenter(latlngs, crs) {
+	let i, j, p1, p2, f, area, x, y, center;
+
+	if (!latlngs || latlngs.length === 0) {
+		throw new Error('latlngs not passed');
+	}
+
+	if (!LineUtil.isFlat(latlngs)) {
+		console.warn('latlngs are not flat! Only the first ring will be used');
+		latlngs = latlngs[0];
+	}
+
+	let centroidLatLng = new LatLng([0, 0]);
+
+	const bounds = new LatLngBounds(latlngs);
+	const areaBounds = bounds.getNorthWest().distanceTo(bounds.getSouthWest()) * bounds.getNorthEast().distanceTo(bounds.getNorthWest());
+	// tests showed that below 1700 rounding errors are happening
+	if (areaBounds < 1700) {
+		// getting a inexact center, to move the latlngs near to [0, 0] to prevent rounding errors
+		centroidLatLng = centroid(latlngs);
+	}
+
+	const len = latlngs.length;
+	const points = [];
+	for (i = 0; i < len; i++) {
+		const latlng = new LatLng(latlngs[i]);
+		points.push(crs.project(new LatLng([latlng.lat - centroidLatLng.lat, latlng.lng - centroidLatLng.lng])));
+	}
+
+	area = x = y = 0;
+
+	// polygon centroid algorithm;
+	for (i = 0, j = len - 1; i < len; j = i++) {
+		p1 = points[i];
+		p2 = points[j];
+
+		f = p1.y * p2.x - p2.y * p1.x;
+		x += (p1.x + p2.x) * f;
+		y += (p1.y + p2.y) * f;
+		area += f * 3;
+	}
+
+	if (area === 0) {
+		// Polygon is so small that all points are on same pixel.
+		center = points[0];
+	} else {
+		center = [x / area, y / area];
+	}
+
+	const latlngCenter = crs.unproject(new Point(center));
+	return new LatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
+}
+
+/* @function centroid(latlngs: LatLng[]): LatLng
+ * Returns the 'center of mass' of the passed LatLngs.
+ */
+export function centroid(coords) {
+	let latSum = 0;
+	let lngSum = 0;
+	let len = 0;
+	for (const coord of coords) {
+		const latlng = new LatLng(coord);
+		latSum += latlng.lat;
+		lngSum += latlng.lng;
+		len++;
+	}
+	return new LatLng([latSum / len, lngSum / len]);
 }

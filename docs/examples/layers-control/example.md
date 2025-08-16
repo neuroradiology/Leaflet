@@ -1,38 +1,53 @@
 ---
 layout: tutorial_frame
-title: Layers Control Tutorial
+title: Layers Control Example
 ---
-<script>
-	var cities = L.layerGroup();
-
-	L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(cities),
-	L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities),
-	L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities),
-	L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(cities);
-
-
-	var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-
-	var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr}),
-		streets  = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
-
-	var map = L.map('map', {
-		center: [39.73, -104.99],
-		zoom: 10,
-		layers: [grayscale, cities]
+<script type="module">
+	import L, {Map, TileLayer, Marker, LayerGroup, Control} from 'leaflet';
+	const cities = new LayerGroup();
+	const mLittleton = new Marker([39.61, -105.02]).bindPopup('This is Littleton, CO.').addTo(cities);
+	const mDenver = new Marker([39.74, -104.99]).bindPopup('This is Denver, CO.').addTo(cities);
+	const mAurora = new Marker([39.73, -104.8]).bindPopup('This is Aurora, CO.').addTo(cities);
+	const mGolden = new Marker([39.77, -105.23]).bindPopup('This is Golden, CO.').addTo(cities);
+	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	});
 
-	var baseLayers = {
-		"Grayscale": grayscale,
-		"Streets": streets
+	const osmHOT = new TileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
+	});
+
+	const map = new Map('map', {
+		center: [39.73, -104.99],
+		zoom: 10,
+		layers: [osm, cities]
+	});
+
+	const baseLayers = {
+		'OpenStreetMap': osm,
+		'OpenStreetMap.HOT': osmHOT
 	};
 
-	var overlays = {
-		"Cities": cities
+	const overlays = {
+		'Cities': cities
 	};
 
-	L.control.layers(baseLayers, overlays).addTo(map);
+	const layerControl = new Control.Layers(baseLayers, overlays).addTo(map);
+
+	const crownHill = new Marker([39.75, -105.09]).bindPopup('This is Crown Hill Park.');
+	const rubyHill = new Marker([39.68, -105.00]).bindPopup('This is Ruby Hill Park.');
+
+	const parks = new LayerGroup([crownHill, rubyHill]);
+
+	const openTopoMap = new TileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+	});
+	layerControl.addBaseLayer(openTopoMap, 'OpenTopoMap');
+	layerControl.addOverlay(parks, 'Parks');
+
+	globalThis.L = L; // only for debugging in the developer console
+	globalThis.map = map; // only for debugging in the developer console
 </script>

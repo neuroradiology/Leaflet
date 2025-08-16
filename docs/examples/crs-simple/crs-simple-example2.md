@@ -1,20 +1,23 @@
 ---
 layout: tutorial_frame
-title: CRS.Simple example
+title: CRS.Simple Example
 ---
-<script>
+<script type="module">
+	import L, {Map, CRS, ImageOverlay, LatLng, Marker} from 'leaflet';
 
-	var map = L.map('map', {
-		crs: L.CRS.Simple,
+	const map = new Map('map', {
+		crs: CRS.Simple,
 		minZoom: -3
 	});
 
-	var bounds = [[-26.5,-25], [1021.5,1023]];
-	var image = L.imageOverlay('uqm_map_full.png', bounds).addTo(map);
+	const bounds = [[-26.5, -25], [1021.5, 1023]];
+	const image = new ImageOverlay('uqm_map_full.png', bounds).addTo(map);
 
-	var sol = L.latLng([ 145, 175 ]);
-	L.marker(sol).addTo(map);
+	const sol = new LatLng([145, 175]);
+	const marker = new Marker(sol).addTo(map);
 
-	map.setView( [70, 120], 1);
+	map.setView([70, 120], 1);
 
+	globalThis.L = L; // only for debugging in the developer console
+	globalThis.map = map; // only for debugging in the developer console
 </script>

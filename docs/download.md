@@ -12,68 +12,127 @@ bodyclass: download-page
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td><a href="http://cdn.leafletjs.com/leaflet/v1.7.1/leaflet.zip">Leaflet 1.7.1</a></td>
-		<td>Stable version, released on September 3, 2020.</td>
+		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v1.9.4/leaflet.zip">Leaflet 1.9.4</a></td>
+		<td>Stable version, released on May 18, 2023.</td>
 	</tr>
 	<tr>
-		<td><a href="https://leafletjs-cdn.s3.amazonaws.com/content/leaflet/master/leaflet.zip">Leaflet 1.8-dev</a></td>
-		<td>In-progress version, developed on the <code>master</code> branch.</td>
-	</tr>
-	<tr>
-		<td class="width100"><a href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.zip">Leaflet 0.7.7</a></td>
-		<td>Legacy version, released on November 18, 2013 and last updated on October 26, 2015.</td>
+		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v2.0.0-alpha.1/leaflet.zip">Leaflet 2.0.0-alpha.1</a></td>
+		<td>Prerelease version, released on August 16, 2025.</td>
 	</tr>
 </table>
 
-[View Changelog](https://github.com/Leaflet/Leaflet/blob/master/CHANGELOG.md)
+[View Changelog](https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md)
 
-Note that the master version can contain incompatible changes,
+Note that the main version can contain incompatible changes,
 so please read the changelog carefully when upgrading to it.
-
-[Get notified of new Leaflet releases](https://github.com/Leaflet/Leaflet/issues/6295)
 
 ### Using a Hosted Version of Leaflet
 
-The latest stable Leaflet release is available on several CDN's &mdash; to start using
-it straight away, place this in the `head` of your HTML code:
+The latest stable Leaflet release is available on several CDNs. To start using it with an [importmap](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap), place the following in the `head` of your HTML code:
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js"></script>
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version }}/dist/leaflet.css" integrity="{{site.integrity_hash_css}}" crossorigin="anonymous" />
 
-To avoid potential security problems, we recommend and encourage enabling
-[subresource integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity)
-when using Leaflet from a CDN:
+<script type="importmap">
+{
+	"imports": {
+		"leaflet": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version }}/dist/leaflet.js"
+	},
+	"integrity": {
+		"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version }}/dist/leaflet.js": "{{site.integrity_hash_uglified}}"
+	}
+}
+</script>
+```
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.css"
-      integrity="{{site.integrity_hash_css}}"
-      crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js"
-      integrity="{{site.integrity_hash_uglified}}"
-      crossorigin=""></script>
+A [**`importmap`**](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) allows defining module specifiers (`import` paths) in the browser without relying on a bundler. It enables the use of named imports directly from a CDN or local files, making module resolution more flexible and readable.
 
-Leaflet is available on the following free CDN's:  [unpkg](https://unpkg.com/leaflet/dist/), [cdnjs](https://cdnjs.com/libraries/leaflet), [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet?path=dist)
 
-_Disclaimer: these services are external to Leaflet; for questions or support, please contact them directly._
+Then, in your script, import the needed Leaflet Classes as follows:
+
+```js
+<script type="module">
+	import {Map, TileLayer} from 'leaflet';
+
+	const map = new Map('map').setView([51.505, -0.09], 13);
+	
+	new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+</script>
+```
+#### Including Leaflet with a Global Scope
+
+The old (and no longer recommended) way to include Leaflet in your project without using modules is by relying on the global variable `L`.
+
+```html
+<script src="https://unpkg.com/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet-global.js" integrity="{{site.integrity_hash_global_uglified}}" crossorigin=""></script>
+```
+
+Note that the [`integrity` hashes](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) are included for security when using Leaflet from a CDN.
+
+Leaflet is available on the following free CDNs: [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet?path=dist), [cdnjs](https://cdnjs.com/libraries/leaflet), [unpkg](https://unpkg.com/leaflet/dist/).
+
+_Disclaimer: These services are external to Leaflet; for questions or support, please contact them directly._
 
 ### Using a Downloaded Version of Leaflet
 
 Inside the archives downloaded from the above links, you will see four things:
 
 - `leaflet.js` - This is the minified Leaflet JavaScript code.
-- `leaflet-src.js` - This is the readable, unminified Leaflet JavaScript, which is sometimes helpful for debugging. <small>(The integrity hash for this file is <nobr><tt>{{site.integrity_hash_source}}</tt></nobr>)</small>
+- `leaflet.js.map` - This is a source map file for `leaflet.js`, allowing browser developer tools to map minified code back to the original source for easier debugging.
+- `leaflet-src.js` - This is the readable, unminified Leaflet JavaScript, which is sometimes helpful for debugging. <small>(integrity="<nobr><tt>{{site.integrity_hash_source}}</tt></nobr>")</small>
+- `leaflet-src.js.map` - This is a source map file for `leaflet-src.js`, providing debugging support for the unminified version of Leaflet.
 - `leaflet.css` - This is the stylesheet for Leaflet.
 - `images` - This is a folder that contains images referenced by `leaflet.css`. It must be in the same directory as `leaflet.css`.
 
 Unzip the downloaded archive to your website's directory and add this to the `head` of your HTML code:
 
-    <link rel="stylesheet" href="/path/to/leaflet.css" />
-    <script src="/path/to/leaflet.js"></script>
+```html
+<link rel="stylesheet" href="/path/to/leaflet.css" />
+<script type="importmap">
+{
+  "imports": {
+    "leaflet": "/path/to/leaflet.js"
+  }
+}
+</script>
+```
 
-### Using a JavaScript package manager
+Then, import Leaflet in your JavaScript file:
+
+```js
+import {Map, TileLayer} from 'leaflet';
+
+const map = new Map('map').setView([51.505, -0.09], 13);
+
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+```
+
+### Using a JavaScript Package Manager
 
 If you use the [`npm` package manager](https://www.npmjs.com/), you can fetch a local copy of Leaflet by running:
 
-    npm install leaflet
+```sh
+npm install leaflet
+```
+
+Then, import Leaflet in your JavaScript file:
+
+```js
+import {Map, TileLayer} from 'leaflet';
+
+const map = new Map('map').setView([51.505, -0.09], 13);
+
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+```
 
 You will find a copy of the Leaflet release files in `node_modules/leaflet/dist`.
 
@@ -86,15 +145,16 @@ from the <a href="https://github.com/Leaflet/Leaflet">GitHub repository</a>.
 
 ### Building Leaflet from the Source
 
-Leaflet build system is powered by the [Node.js](http://nodejs.org) platform,
+Leaflet's build system is powered by the [Node.js](http://nodejs.org) platform,
 which installs easily and works well across all major platforms.
 Here are the steps to set it up:
 
- 1. [Download and install Node](http://nodejs.org)
- 2. Run the following command in the command line:
+1. [Download and install Node](http://nodejs.org)
+2. Run the following command in the command line:
 
- <pre><code>npm install</code></pre>
+```sh
+npm install
+```
 
 Now that you have everything installed, run `npm run build` inside the Leaflet directory.
 This will combine and compress the Leaflet source files, saving the build to the `dist` folder.
-

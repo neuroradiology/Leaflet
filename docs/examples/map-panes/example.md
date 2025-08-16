@@ -1,12 +1,12 @@
 ---
 layout: tutorial_frame
-title: Custom Icons Tutorial
+title: Custom Pane Example
 ---
 <script type="text/javascript" src="eu-countries.js"></script>
 
-<script>
-
-	var map = L.map('map');
+<script type="module">
+	import L, {Map, TileLayer, GeoJSON} from 'leaflet';
+	const map = new Map('map');
 
 	map.createPane('labels');
 
@@ -16,22 +16,26 @@ title: Custom Icons Tutorial
 	// Layers in this pane are non-interactive and do not obscure mouse/touch events
 	map.getPane('labels').style.pointerEvents = 'none';
 
-	var cartodbAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>';
+	const cartodbAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>';
 
-	var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+	const positron = new TileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
 		attribution: cartodbAttribution
 	}).addTo(map);
 
-	var positronLabels = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+	const positronLabels = new TileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
 		attribution: cartodbAttribution,
 		pane: 'labels'
 	}).addTo(map);
 
-	geojson = L.geoJson(euCountries).addTo(map);
+	/* global euCountries */
+	const geojson = new GeoJSON(euCountries).addTo(map);
 
-	geojson.eachLayer(function (layer) {
+	geojson.eachLayer((layer) => {
 		layer.bindPopup(layer.feature.properties.name);
 	});
 
-	map.setView({ lat: 47.040182144806664, lng: 9.667968750000002 }, 4);
+	map.setView({lat: 47.040182144806664, lng: 9.667968750000002}, 4);
+
+	globalThis.L = L; // only for debugging in the developer console
+	globalThis.map = map; // only for debugging in the developer console
 </script>

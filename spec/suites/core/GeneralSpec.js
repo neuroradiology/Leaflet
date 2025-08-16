@@ -1,15 +1,8 @@
-describe('General', function () {
-	describe('noConflict', function () {
-		var leaflet = L;
+import L from 'leaflet-bundle';
+import {expect} from 'chai';
 
-		after(function () {
-			L = leaflet;
-		});
-
-		expect(L.noConflict()).to.eql(leaflet);
-	});
-
-	describe('namespace extension', function () {
+describe('General', () => {
+	it('namespace extension', () => {
 		L.Util.foo = 'bar';
 		L.Foo = 'Bar';
 

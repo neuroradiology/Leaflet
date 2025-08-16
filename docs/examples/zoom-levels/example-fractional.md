@@ -1,55 +1,57 @@
 ---
 layout: tutorial_frame
-title: Zoom Levels Tutorial
+title: Fractional Zoom Example
 ---
-<script>
+<script type="module">
+	import L, {Map, TileLayer, Control, DomUtil} from 'leaflet';
 
-	var map = L.map('map', {
+	const map = new Map('map', {
 		minZoom: 0,
 		maxZoom: 1,
 		zoomSnap: 0.25,
 		dragging: false
 	});
 
-	var cartodbAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>';
+	const cartodbAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>';
 
-	var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+	const positron = new TileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 		attribution: cartodbAttribution
 	}).addTo(map);
 
-	function zoomCycle(){
+	function zoomCycle() {
 		map.setZoom(0);
-		timeouts = [];
-		timeouts.push(setTimeout(function(){ map.setZoom(0.25); },  1000));
-		timeouts.push(setTimeout(function(){ map.setZoom(0.50); },  2000));
-		timeouts.push(setTimeout(function(){ map.setZoom(0.75); },  3000));
-		timeouts.push(setTimeout(function(){ map.setZoom(1);    },  4000));
-		timeouts.push(setTimeout(function(){ map.setZoom(0.75); },  5000));
-		timeouts.push(setTimeout(function(){ map.setZoom(0.50); },  6000));
-		timeouts.push(setTimeout(function(){ map.setZoom(0.25); },  7000));
+		const timeouts = [];
+		timeouts.push(setTimeout(() => { map.setZoom(0.25); }, 1000));
+		timeouts.push(setTimeout(() => { map.setZoom(0.50); }, 2000));
+		timeouts.push(setTimeout(() => { map.setZoom(0.75); }, 3000));
+		timeouts.push(setTimeout(() => { map.setZoom(1.00); }, 4000));
+		timeouts.push(setTimeout(() => { map.setZoom(0.75); }, 5000));
+		timeouts.push(setTimeout(() => { map.setZoom(0.50); }, 6000));
+		timeouts.push(setTimeout(() => { map.setZoom(0.25); }, 7000));
 	}
 	zoomCycle();
 
-	var zoomingInterval = setInterval(zoomCycle, 8000);
+	const zoomingInterval = setInterval(zoomCycle, 8000);
 
-	var ZoomViewer = L.Control.extend({
-		onAdd: function(){
-
-			var container= L.DomUtil.create('div');
-			var gauge = L.DomUtil.create('div');
+	const ZoomViewer = Control.extend({
+		onAdd() {
+			const container = DomUtil.create('div');
+			const gauge = DomUtil.create('div');
 			container.style.width = '200px';
 			container.style.background = 'rgba(255,255,255,0.5)';
 			container.style.textAlign = 'left';
-			map.on('zoomstart zoom zoomend', function(ev){
-				gauge.innerHTML = 'Zoom level: ' + map.getZoom();
-			})
+			map.on('zoomstart zoom zoomend', (ev) => {
+				gauge.innerHTML = `Zoom level: ${map.getZoom()}`;
+			});
 			container.appendChild(gauge);
-
 			return container;
 		}
 	});
 
-	(new ZoomViewer).addTo(map);
+	const zoomViewerControl = (new ZoomViewer()).addTo(map);
 
 	map.setView([0, 0], 0);
+
+	globalThis.L = L; // only for debugging in the developer console
+	globalThis.map = map; // only for debugging in the developer console
 </script>

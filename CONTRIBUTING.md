@@ -36,8 +36,8 @@ here are some tips for creating a helpful report that will make fixing it much e
  * Include **browser, OS and Leaflet version** info in the description.
  * Create a **simple test case** that demonstrates the bug (e.g. using [Leaflet plunker](http://leafletjs.com/edit.html)).
  * Check whether the bug can be reproduced in **other browsers**.
- * Check if the bug occurs in the stable version, master, or both.
- * *Bonus tip:* if the bug only appears in the master version but the stable version is fine,
+ * Check if the bug occurs in the stable version, main, or both.
+ * *Bonus tip:* if the bug only appears in the main version but the stable version is fine,
    use `git bisect` to find the exact commit that introduced the bug.
 
 If you just want some help with your project,
@@ -60,7 +60,7 @@ and ask yourself two questions:
     Or will it look better as a plugin in a separate repository?
  2. Is it written in a simple, concise way that doesn't add bulk to the codebase?
 
-If your feature or API improvement did get merged into master,
+If your feature or API improvement did get merged into main,
 please consider submitting another pull request with the corresponding [documentation update](#improving-documentation).
 
 ### Setting up the Build System
@@ -84,25 +84,25 @@ be sure to check out the awesome [article about forking](https://help.github.com
 on the GitHub Help website &mdash; it will get you started quickly.
 
 You should always write each batch of changes (feature, bugfix, etc.) in **its own topic branch**.
-Please do not commit to the `master` branch, or your unrelated changes will go into the same pull request.
+Please do not commit to the `main` branch of your fork — otherwise your unrelated changes will go into the same pull request.
 
 You should also follow the code style and whitespace conventions of the original codebase.
 In particular, use tabs for indentation and spaces for alignment.
 
-Before committing your changes, run `npm run lint` to catch any JS errors in the code and fix them.
-If you add any new files to the Leaflet source, make sure to also add them to `build/deps.js`
-so that the build system knows about them.
+Before committing your changes, run `npm run lint` to catch any JS errors in the code and fix them. 
+The same command is automatically executed while committing. 
+You can prevent it from execution with the git flag `--no-verify`: `git commit -m "WIP" --no-verify`.  
 
 Also, please make sure that you have [line endings configured properly](https://help.github.com/articles/dealing-with-line-endings) in Git! Otherwise the diff will show that all lines of a file were changed even if you touched only one.
 
 Happy coding!
 
-### Using RollupJS
+### Building Leaflet
 
 The source JavaScript code for Leaflet is a few dozen files, in the `src/` directory.
 But normally, Leaflet is loaded in a web browser as just one JavaScript file.
 
-In order to create this file, run `npm run rollup` or `yarn run rollup`.
+In order to create this file, run `npm run build` or `yarn run build`.
 
 You'll find `dist/leaflet-src.js` and `dist/leaflet.js`. The difference is that
 `dist/leaflet-src.js` has sourcemaps and it's not uglified, so it's better for
@@ -110,7 +110,7 @@ development. `dist/leaflet.js` is uglified and thus is smaller, so it's better
 for deployment.
 
 When developing (or bugfixing) core Leaflet functionalities, it's common to use
-the webpages in the `debug/` directory, and run the unit tests (`spec/index.html`)
+the webpages in the `debug/` directory, and run the tests
 in a graphical browser. This requires regenerating the bundled files quickly.
 
 In order to do so, run `npm run watch` or `yarn run watch`. This will keep
@@ -118,48 +118,49 @@ on rebuilding the bundles whenever any source file changes.
 
 ## Running the Tests
 
-To run the tests from the command line,
-install [PhantomJS](http://phantomjs.org/) (and make sure it's in your `PATH`),
-then run:
+Before running the tests, make sure that the source code has been built (as mentioned above). If you want to run the tests in the background while working on Leaflet, it is recommended you run the build in `watch` mode. This way the tests will automatically re-run when changes to the source code are made. 
+
+To run the tests from the command line, ensure you have [Google Chrome](https://www.google.com/chrome/) installed and then run:
 
 ```
 npm test
 ```
 
-To run all the tests in actual browsers at the same time, you can do:
+By default the tests will run in Google Chrome headlessly (without a UI), to run the tests in other browsers you can pass in the [`--browsers`](https://karma-runner.github.io/latest/config/configuration-file.html#browsers) flag.
 
 ```
-npm test -- -- --browsers Firefox,Chrome,Safari,IE
+npm test -- --browsers Firefox
 ```
 
-(Note: the doubling of "`--`" [special option](https://docs.npmjs.com/cli/run-script#description) is [important](https://github.com/Leaflet/Leaflet/pull/6166#issuecomment-390959903))
-
-To run the tests in a browser manually, open `spec/index.html`.
+For a list of available browsers see the documentation of the included launcher plugins:
+- [`karma-chrome-launcher`](https://github.com/karma-runner/karma-chrome-launcher#available-browsers)
+- [`karma-firefox-launcher`](https://github.com/karma-runner/karma-firefox-launcher#configuration)
+- [`karma-safarinative-launcher`](https://github.com/muthu90ec/karma-safarinative-launcher#readme)
 
 ## Improving Documentation
 
-The code of the live Leaflet website that contains all documentation and examples is located in the `docs/` directory of the `master` branch
+The code of the live Leaflet website that contains all documentation and examples is located in the `docs/` directory of the `main` branch
 and is automatically generated from a set of HTML and Markdown files by [Jekyll](http://jekyllrb.com/).
 
 The easiest way to make little improvements such as fixing typos without even leaving the browser
 is by editing one of the files with the online GitHub editor:
-browse the [`docs/ directory`](https://github.com/Leaflet/Leaflet/tree/master/docs),
-choose a certain file for editing (e.g. `plugins.md` for the list of Leaflet plugins),
-click the Edit button, make changes and follow instructions from there.
+browse the [`docs/ directory`](https://github.com/Leaflet/Leaflet/tree/main/docs),
+choose a certain file for editing, click the Edit button, make changes and follow instructions from there.
 Once it gets merged, the changes will immediately appear on the website.
+
+To work on the documentation locally ensure you have Ruby installed. You can download it from the [Ruby website](https://www.ruby-lang.org/en/downloads/) or use [`rbenv`](https://github.com/rbenv/rbenv) (recommended).
+
+You'll need to install the same Ruby version as specified in [`.ruby-version`](./docs/.ruby-version). If you are using `rbenv` you can install this by running `rbenv install` from the `docs/` directory.
 
 If you need to make edits in a local repository to see how it looks in the process, do the following:
 
- 1. [Install Ruby](http://www.ruby-lang.org/en/) if you don't have it yet.
- 2. Run `gem install jekyll`.
- 3. Enter the directory where you cloned the Leaflet repository
- 4. Make sure you are in the `master` branch by running `git checkout master`
- 5. Enter the documentation subdirectory by running `cd docs`
- 6. Run `bundle install`
- 7. Run `jekyll serve --watch` (if you have a Gem::LoadError error run `bundle exec jekyll serve --watch` instead)
- 8. Open `localhost:4000` in your web browser.
+1. Open a terminal in the `docs/` directory.
+2. Make sure you are on the `main` branch by running `git checkout main`.
+3. Run `bundle install` to install the dependencies.
+4. Run `npm run serve` to serve the documentation.
+5. Open [http://localhost:4000](http://localhost:4000) in your web browser.
 
-Now any file changes will be updated when you reload pages automatically.
+Now any file changes in `docs/` will be applied when you reload pages.
 After committing the changes, just send a pull request.
 
 ### API documentation
@@ -187,9 +188,9 @@ over to `docs/reference.html` - there is no need to send pull requests with chan
 Everyone is invited to participate in the Leaflet community and related projects:
 we want to create a welcoming and friendly environment.
 Harassment of participants or other unethical and unprofessional behavior will not be tolerated in our spaces.
-The [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/)
+The [Contributor Covenant](CODE_OF_CONDUCT.md)
 applies to all projects under the Leaflet organization.
-Report any issues to agafonkin@gmail.com.
+Report any issues to agafonkin@gmail.com or ivan@sanchezortega.es.
 
 ## Thank You
 
